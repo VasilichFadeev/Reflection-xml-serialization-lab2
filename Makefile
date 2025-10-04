@@ -36,7 +36,7 @@ test: compile-tests
 # Очистка скомпилированных файлов
 clean:
 	@echo "Cleaning build directory..."
-	@rm -rf build *.xml
+	@rm -rf build
 	@echo "Clean completed!"
 
 # Помощь
