@@ -9,6 +9,8 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.lang.reflect.Array;
+import java.util.Collection;
 
 public class XmlSerializerService {
 
@@ -31,38 +33,69 @@ public class XmlSerializerService {
     private static void serializeObject(Object obj, Element parent, Document doc) throws Exception {
         if (obj == null) return;
         Class<?> clazz = obj.getClass();
+
         for (Field field : clazz.getDeclaredFields()) {
             field.setAccessible(true);
-            if (field.isAnnotationPresent(XmlField.class)) {
-                Object value = field.get(obj);
-                String tagName = field.getAnnotation(XmlField.class).name();
-                if (tagName.isEmpty()) tagName = field.getName();
+            if (!field.isAnnotationPresent(XmlField.class)) continue;
 
-                Element elem = doc.createElement(tagName);
-                if (value == null) {
-                    parent.appendChild(elem);
-                    continue;
-                }
+            Object value = field.get(obj);
+            String tagName = field.getAnnotation(XmlField.class).name();
+            if (tagName.isEmpty()) tagName = field.getName();
 
-                if (value.getClass().isArray()) {
-                    Object[] arr = (Object[]) value;
-                    for (Object item : arr) {
-                        Element itemElem = doc.createElement("item");
-                        if (item instanceof String || item instanceof Number || item instanceof Boolean) {
-                            itemElem.setTextContent(item.toString());
-                        } else {
-                            serializeObject(item, itemElem, doc);
-                        }
-                        elem.appendChild(itemElem);
-                    }
-                } else if (value instanceof String || value instanceof Number || value instanceof Boolean) {
-                    elem.setTextContent(value.toString());
-                } else {
-                    serializeObject(value, elem, doc); // рекурсия
-                }
+            Element elem = doc.createElement(tagName);
+
+            if (value == null) {
                 parent.appendChild(elem);
+                continue;
             }
+
+            Class<?> vType = value.getClass();
+
+            if (vType.isArray()) {
+                int len = Array.getLength(value);
+                for (int i = 0; i < len; i++) {
+                    Object item = Array.get(value, i);
+                    Element itemElem = doc.createElement("item");
+                    if (item == null) {
+                        elem.appendChild(itemElem);
+                        continue;
+                    }
+                    if (isScalar(item)) {
+                        itemElem.setTextContent(item.toString());
+                    } else {
+                        serializeObject(item, itemElem, doc);
+                    }
+                    elem.appendChild(itemElem);
+                }
+
+            } else if (value instanceof Collection<?> col) {
+                for (Object item : col) {
+                    Element itemElem = doc.createElement("item");
+                    if (item == null) {
+                        elem.appendChild(itemElem);
+                        continue;
+                    }
+                    if (isScalar(item)) {
+                        itemElem.setTextContent(item.toString());
+                    } else {
+                        serializeObject(item, itemElem, doc);
+                    }
+                    elem.appendChild(itemElem);
+                }
+
+            } else if (isScalar(value)) {
+                elem.setTextContent(value.toString());
+
+            } else {
+                serializeObject(value, elem, doc);
+            }
+
+            parent.appendChild(elem);
         }
+    }
+
+    private static boolean isScalar(Object x) {
+        return x instanceof String || x instanceof Number || x instanceof Boolean || x instanceof Character;
     }
 
     public static <T> T deserialize(Class<T> clazz, String filename) throws Exception {
@@ -101,7 +134,6 @@ public class XmlSerializerService {
             Class<?> fieldType = field.getType();
 
             if (fieldType.isArray()) {
-                // Обработка массива
                 NodeList items = child.getElementsByTagName("item");
                 Class<?> componentType = fieldType.getComponentType();
                 Object array = Array.newInstance(componentType, items.getLength());
