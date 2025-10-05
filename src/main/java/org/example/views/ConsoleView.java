@@ -13,7 +13,7 @@ public class ConsoleView {
         System.out.print("Ваш выбор: ");
 
         while (!scanner.hasNextInt()) {
-            System.out.println("❌ Ошибка: введите число!");
+            System.out.println("Ошибка: введите число!");
             scanner.next();
         }
 
@@ -30,7 +30,7 @@ public class ConsoleView {
             if (input == null) input = "";
 
             if (input.trim().isEmpty()) {
-                System.out.println("❌ Ошибка: поле не может быть пустым!");
+                System.out.println("Ошибка: поле не может быть пустым!");
             }
         } while (input.trim().isEmpty());
 
@@ -43,14 +43,14 @@ public class ConsoleView {
             String input = scanner.nextLine().trim();
 
             if (input.isEmpty()) {
-                System.out.println("❌ Ошибка: введите число!");
+                System.out.println("Ошибка: введите число!");
                 continue;
             }
 
             try {
                 return Integer.parseInt(input);
             } catch (NumberFormatException e) {
-                System.out.println("❌ Ошибка: введите корректное число!");
+                System.out.println("Ошибка: введите корректное число!");
             }
         }
     }
