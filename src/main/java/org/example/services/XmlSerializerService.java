@@ -1,4 +1,3 @@
-// src/main/java/org/example/services/XmlSerializerService.java
 package org.example.services;
 
 import org.example.annotations.XmlField;
@@ -13,7 +12,6 @@ import java.lang.reflect.Field;
 
 public class XmlSerializerService {
 
-    // === СЕРИАЛИЗАЦИЯ ===
     public static void serialize(Object obj, String filename) throws Exception {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -67,7 +65,6 @@ public class XmlSerializerService {
         }
     }
 
-    // === ДЕСЕРИАЛИЗАЦИЯ ===
     public static <T> T deserialize(Class<T> clazz, String filename) throws Exception {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -95,7 +92,7 @@ public class XmlSerializerService {
             try {
                 field = clazz.getDeclaredField(fieldName);
             } catch (NoSuchFieldException e) {
-                continue; // поле не аннотировано — пропускаем
+                continue;
             }
 
             if (!field.isAnnotationPresent(XmlField.class)) continue;

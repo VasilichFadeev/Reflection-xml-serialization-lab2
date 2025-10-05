@@ -13,7 +13,7 @@ public class ConsoleView {
         System.out.print("Ваш выбор: ");
 
         while (!scanner.hasNextInt()) {
-            System.out.println("Ошибка: введите число!");
+            System.out.println("❌ Ошибка: введите число!");
             scanner.next();
         }
 
@@ -23,20 +23,36 @@ public class ConsoleView {
     }
 
     public String readString(String prompt) {
-        System.out.print(prompt);
-        return scanner.nextLine();
+        String input;
+        do {
+            System.out.print(prompt);
+            input = scanner.nextLine();
+            if (input == null) input = "";
+
+            if (input.trim().isEmpty()) {
+                System.out.println("❌ Ошибка: поле не может быть пустым!");
+            }
+        } while (input.trim().isEmpty());
+
+        return input.trim();
     }
 
     public int readInt(String prompt) {
-        System.out.print(prompt);
-        while (!scanner.hasNextInt()) {
-            System.out.println("Ошибка: нужно ввести число!");
+        while (true) {
             System.out.print(prompt);
-            scanner.next();
+            String input = scanner.nextLine().trim();
+
+            if (input.isEmpty()) {
+                System.out.println("❌ Ошибка: введите число!");
+                continue;
+            }
+
+            try {
+                return Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                System.out.println("❌ Ошибка: введите корректное число!");
+            }
         }
-        int value = scanner.nextInt();
-        scanner.nextLine();
-        return value;
     }
 
     public void showMessage(String msg) {

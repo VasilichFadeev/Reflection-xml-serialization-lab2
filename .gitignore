@@ -1,0 +1,48 @@
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# VS Code
+.vscode/
+
+# Build directories
+build/
+target/
+
+# Compiled class files
+*.class
+
+# Temporary files
+*.tmp
+*.log
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+
+# Test output / temporary files from tests
+test-output/
+temp/
+
+# Your specific report files
+~$ЛП2.docx
+ЛП2.docx
+
+# Maven (если используете)
+pom.xml.backup
+mvnw
+mvnw.cmd
+
+# Gradle (если используете)
+.gradle/
+build.gradle
+settings.gradle
+
+# Any other local config files
+local.properties
+config.properties
